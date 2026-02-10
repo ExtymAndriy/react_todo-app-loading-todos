@@ -170,7 +170,7 @@ export const App: React.FC = () => {
                       onChange={() => handleCheckedId(todo.id)}
                     />
 
-                    <span className="visually-hidden">*</span>
+                    <span className="visually-hidden">&nbsp;</span>
                   </label>
 
                   <span data-cy="TodoTitle" className="todo__title">
