@@ -12,6 +12,8 @@ export const App: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<Status>('all');
+  const [loading, setLoading] = useState(false);
+
   // const [isEditeing, setIsEditeing] = useState(false);
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -30,11 +32,18 @@ export const App: React.FC = () => {
   }, [errorMessage]);
 
   useEffect(() => {
+    setLoading(true);
+    setErrorMessage(null);
+
     getTodos()
-      .then(setTodos)
-      .catch(err => {
+      .then(data => {
+        setTodos(data);
+      })
+      .catch(() => {
         setErrorMessage('Unable to load todos');
-        throw err;
+      })
+      .finally(() => {
+        setLoading(false);
       });
   }, []);
 
@@ -141,7 +150,9 @@ export const App: React.FC = () => {
           </form>
         </header>
 
-        {todos.length > 0 && (
+        {loading && <div data-cy="TodoLoader" className="loader is-active" />}
+
+        {!loading && todos.length > 0 && (
           <section className="todoapp__main" data-cy="TodoList">
             {visibleTodos.map(todo => {
               return (
@@ -154,9 +165,11 @@ export const App: React.FC = () => {
                     <input
                       type="checkbox"
                       className="todo__status"
+                      data-cy="TodoStatus"
                       checked={todo.completed}
                       onChange={() => handleCheckedId(todo.id)}
                     />
+
                     <span className="visually-hidden">*</span>
                   </label>
 
@@ -175,10 +188,12 @@ export const App: React.FC = () => {
                   </button>
 
                   {/* overlay will cover the todo while it is being deleted or updated */}
-                  {/* <div data-cy="TodoLoader" className="modal overlay">
-                    <div className="modal-background has-background-white-ter" />
-                    <div className="loader" />
-                  </div> */}
+                  {
+                    <div data-cy="TodoLoader" className="modal overlay">
+                      <div className="modal-background has-background-white-ter" />
+                      <div className="loader" />
+                    </div>
+                  }
                 </div>
               );
             })}
@@ -186,7 +201,7 @@ export const App: React.FC = () => {
         )}
 
         {/* Hide the footer if there are no todos */}
-        {todos.length > 0 && (
+        {!loading && todos.length > 0 && (
           <Footer
             todos={todos}
             setFilterStatus={setFilterStatus}
