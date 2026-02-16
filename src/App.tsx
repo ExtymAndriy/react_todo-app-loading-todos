@@ -1,10 +1,13 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { UserWarning } from './UserWarning';
-import { getTodos, USER_ID } from './api/todos';
-import * as todosServers from '../src/utils/fetchClient';
+import {
+  getTodos,
+  USER_ID,
+  deleteTodo as deleteTodoAPI,
+  addTodo,
+} from './api/todos';
 import { Footer } from './components/Footer';
-
-type Status = 'all' | 'active' | 'completed';
+import { Status } from './types/StatusType';
 
 interface Todo {
   id: number;
@@ -68,7 +71,7 @@ export const App: React.FC = () => {
   const deleteTodo = (postId: number) => {
     const currentTodos = [...todos];
 
-    todosServers.client.delete(`/todos/${postId}`).catch(error => {
+    deleteTodoAPI(postId).catch(error => {
       setTodos(currentTodos);
       setErrorMessage('Unable to delete a todo');
       throw error;
@@ -103,8 +106,7 @@ export const App: React.FC = () => {
       completed: false,
     };
 
-    todosServers.client
-      .post('/todos', todo)
+    addTodo(todo)
       .then(newPost => {
         setTodos(currentTodos => [...currentTodos, newPost as Todo]);
         setErrorMessage(null);
@@ -126,7 +128,7 @@ export const App: React.FC = () => {
 
       <div className="todoapp__content">
         <header className="todoapp__header">
-          {todos.length > 0 && (
+          {!!todos.length && (
             <button
               type="button"
               className="todoapp__toggle-all active"
@@ -146,7 +148,10 @@ export const App: React.FC = () => {
           </form>
         </header>
 
-        {loading && <div data-cy="TodoLoader" className="loader is-active" />}
+        <div
+          data-cy="TodoLoader"
+          className={`loader ${loading ? 'is-active' : ''}`}
+        />
 
         {!loading && todos.length > 0 && (
           <section className="todoapp__main" data-cy="TodoList">
