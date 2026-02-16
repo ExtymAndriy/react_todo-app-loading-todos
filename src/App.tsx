@@ -180,12 +180,15 @@ export const App: React.FC = () => {
                   ×
                 </button>
 
-                {todo.loading && (
-                  <div data-cy="TodoLoader" className="modal overlay">
-                    <div className="modal-background has-background-white-ter" />
-                    <div className="loader" />
-                  </div>
-                )}
+                <div
+                  data-cy="TodoLoader"
+                  className={
+                    todo.loading ? 'modal overlay is-active' : 'modal overlay'
+                  }
+                >
+                  <div className="modal-background has-background-white-ter" />
+                  <div className="loader" />
+                </div>
               </div>
             ))}
           </section>
