@@ -17,7 +17,7 @@ export const App: React.FC = () => {
   const [inputValue, setInputValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [filterStatus, setFilterStatus] = useState<Status>(Status.All);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -142,11 +142,6 @@ export const App: React.FC = () => {
             />
           </form>
         </header>
-
-        <div
-          data-cy="TodoLoader"
-          className={`loader ${loading ? 'is-active' : ''}`}
-        />
 
         {!loading && todos.length > 0 && (
           <section className="todoapp__main" data-cy="TodoList">
