@@ -1,7 +1,6 @@
 import React from 'react';
 import { Todo } from '../types/Todo';
-
-type Status = 'all' | 'active' | 'completed';
+import { Status } from '../types/StatusType';
 
 type Props = {
   todos: Todo[];
@@ -26,9 +25,9 @@ export const Footer: React.FC<Props> = ({
       <nav className="filter" data-cy="Filter">
         <button
           type="button"
-          className={`filter__link ${filterStatus === 'all' ? 'selected' : ''}`}
+          className={`filter__link ${filterStatus === Status.All ? 'selected' : ''}`}
           data-cy="FilterLinkAll"
-          onClick={() => setFilterStatus('all')}
+          onClick={() => setFilterStatus(Status.All)}
         >
           All
         </button>
@@ -36,10 +35,10 @@ export const Footer: React.FC<Props> = ({
         <button
           type="button"
           className={`filter__link ${
-            filterStatus === 'active' ? 'selected' : ''
+            filterStatus === Status.Active ? 'selected' : ''
           }`}
           data-cy="FilterLinkActive"
-          onClick={() => setFilterStatus('active')}
+          onClick={() => setFilterStatus(Status.Active)}
         >
           Active
         </button>
@@ -47,10 +46,10 @@ export const Footer: React.FC<Props> = ({
         <button
           type="button"
           className={`filter__link ${
-            filterStatus === 'completed' ? 'selected' : ''
+            filterStatus === Status.Completed ? 'selected' : ''
           }`}
           data-cy="FilterLinkCompleted"
-          onClick={() => setFilterStatus('completed')}
+          onClick={() => setFilterStatus(Status.Completed)}
         >
           Completed
         </button>

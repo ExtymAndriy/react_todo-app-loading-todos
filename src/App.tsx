@@ -7,21 +7,16 @@ import {
   addTodo,
 } from './api/todos';
 import { Footer } from './components/Footer';
+import { ErrorNotification } from './components/ErrorNotification';
+import { TodoItem } from './components/TodoItem';
 import { Status } from './types/StatusType';
-
-interface Todo {
-  id: number;
-  userId: number;
-  title: string;
-  completed: boolean;
-  loading?: boolean;
-}
+import { Todo } from './types/Todo';
 
 export const App: React.FC = () => {
   const [todos, setTodos] = useState<Todo[]>([]);
   const [inputValue, setInputValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const [filterStatus, setFilterStatus] = useState<Status>('all');
+  const [filterStatus, setFilterStatus] = useState<Status>(Status.All);
   const [loading, setLoading] = useState(false);
 
   const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -57,9 +52,9 @@ export const App: React.FC = () => {
   }, []);
 
   function filterTodos(status: Status) {
-    if (status === 'active') {
+    if (status === Status.Active) {
       return todos.filter(todo => !todo.completed);
-    } else if (status === 'completed') {
+    } else if (status === Status.Completed) {
       return todos.filter(todo => todo.completed);
     }
 
@@ -156,45 +151,12 @@ export const App: React.FC = () => {
         {!loading && todos.length > 0 && (
           <section className="todoapp__main" data-cy="TodoList">
             {visibleTodos.map(todo => (
-              <div
-                data-cy="Todo"
-                className={todo.completed ? 'todo completed' : 'todo'}
+              <TodoItem
                 key={todo.id}
-              >
-                <label className="todo__status-label">
-                  <input
-                    type="checkbox"
-                    className="todo__status"
-                    data-cy="TodoStatus"
-                    checked={todo.completed}
-                    onChange={() => handleCheckedId(todo.id)}
-                    aria-label="Toggle todo status"
-                  />
-                </label>
-
-                <span data-cy="TodoTitle" className="todo__title">
-                  {todo.title}
-                </span>
-
-                <button
-                  type="button"
-                  className="todo__remove"
-                  data-cy="TodoDelete"
-                  onClick={() => deleteTodo(todo.id)}
-                >
-                  ×
-                </button>
-
-                <div
-                  data-cy="TodoLoader"
-                  className={
-                    todo.loading ? 'modal overlay is-active' : 'modal overlay'
-                  }
-                >
-                  <div className="modal-background has-background-white-ter" />
-                  <div className="loader" />
-                </div>
-              </div>
+                todo={todo}
+                onDelete={deleteTodo}
+                onToggleComplete={handleCheckedId}
+              />
             ))}
           </section>
         )}
@@ -208,17 +170,10 @@ export const App: React.FC = () => {
         )}
       </div>
 
-      <div
-        data-cy="ErrorNotification"
-        className={
-          !errorMessage
-            ? 'notification is-danger is-light has-text-weight-normal hidden'
-            : 'notification is-danger is-light has-text-weight-normal'
-        }
-      >
-        <button data-cy="HideErrorButton" type="button" className="delete" />
-        {errorMessage}
-      </div>
+      <ErrorNotification
+        errorMessage={errorMessage}
+        onClose={() => setErrorMessage(null)}
+      />
     </div>
   );
 };
