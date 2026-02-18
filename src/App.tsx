@@ -143,6 +143,7 @@ export const App: React.FC = () => {
           </form>
         </header>
 
+
         {!loading && todos.length > 0 && (
           <section className="todoapp__main" data-cy="TodoList">
             {visibleTodos.map(todo => (
